@@ -9,7 +9,7 @@ A web based version of the game "Wanted!" for Super Mario 64 DS using browser wi
 
 
 
-## Usage
+## How to play
 
 ```Click once anywhere on the screen to bring up the pop-ups, most modern browsers will almost always block all the popups so please enable them beforehand or after and refresh the page.```
 
