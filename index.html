@@ -1,13 +1,13 @@
 <html>
 <head>
-  <link rel="icon" type="image/x-icon" href="https://nikowoo.github.io/PopupLuigi/public/img/favicon.png">
+  <link rel="icon" type="image/x-icon" href="public/img/favicon.png">
   <title>Bouncing Luigi Army</title>
 </head>
 <body></body>
   <img style="position: absolute;
   right: 9px;
   bottom: 16px;
-  width: 15%;" src="https://nikowoo.github.io/PopupLuigi/public/img/logo.png">
+  width: 15%;" src="public/img/logo.png">
 <style>
   #text {
     color: white;
@@ -31,13 +31,13 @@ let countdownInterval;
 function startGame() {
   Funky();
   openLuigiPopup();
-  for (let i = 0; i < 9; i++) openBouncingTacoPopup();
+  for (let i = 0; i < 14; i++) openBouncingTacoPopup();
   openIntroPopup();
 
   setTimeout(() => {
     revealPopupImages();
     startTimer(); 
-    playSound('https://nikowoo.github.io/PopupLuigi/public/audio/level_start.ogg');
+    playSound('public/audio/level_start.ogg');
   }, 1000);
 }
 
@@ -45,7 +45,7 @@ function startGame() {
 
 
 function playTickSound() {
-  const audio = new Audio('https://nikowoo.github.io/PopupLuigi/public/audio/tick.ogg');
+  const audio = new Audio('public/audio/tick.ogg');
   audio.play().catch(err => console.log('Tick sound error:', err));
 }
 
@@ -73,7 +73,7 @@ function startTimer() {
 
 
   function handleTimeout() {
-    playSound('https://nikowoo.github.io/PopupLuigi/public/audio/luigi_timeup.wav');
+    playSound('public/audio/luigi_timeup.wav');
     highlightLuigi();
     setTimeout(restartGame, 3000);
   }
@@ -93,12 +93,13 @@ function restartGame() {
   setTimeout(() => {
     Funky();
     openLuigiPopup();
-    for (let i = 0; i < 9; i++) openBouncingTacoPopup();
+    for (let i = 0; i < 14; i++) openBouncingTacoPopup();
     openIntroPopup();
 
     setTimeout(() => {
       revealPopupImages();
       startTimer();
+      playSound('public/audio/level_start.ogg');
     }, 1000);
   }, 500);
 }
@@ -129,7 +130,7 @@ function openIntroPopup() {
 
   function Funky() {
     if (!hasPlayed) {
-      const audio = new Audio('https://nikowoo.github.io/PopupLuigi/public/audio/music.wav');
+      const audio = new Audio('public/audio/music.wav');
       audio.loop = true;
       audio.play();
       hasPlayed = true;
@@ -137,14 +138,14 @@ function openIntroPopup() {
   }
 
   function openLuigiPopup() {
-    openPopupWithImage("https://nikowoo.github.io/PopupLuigi/public/img/character/luigi.png", true);
+    openPopupWithImage("public/img/character/luigi.png", true);
   }
 
   function openBouncingTacoPopup() {
     const images = [
-      "https://nikowoo.github.io/PopupLuigi/public/img/character/mario.png",
-      "https://nikowoo.github.io/PopupLuigi/public/img/character/wario.png",
-      "https://nikowoo.github.io/PopupLuigi/public/img/character/yoshi.png"
+      "public/img/character/mario.png",
+      "public/img/character/wario.png",
+      "public/img/character/yoshi.png"
     ];
     const randomImage = images[Math.floor(Math.random() * images.length)];
     openPopupWithImage(randomImage, false);
@@ -206,7 +207,7 @@ function openIntroPopup() {
             playRandomFunnySound();
           } else {
             clearTimeout(timer);
-            playSound('https://nikowoo.github.io/PopupLuigi/public/audio/luigi_wrong.wav');
+            playSound('public/audio/luigi_wrong.wav');
             restartGame();
           }
         };
@@ -233,9 +234,9 @@ function openIntroPopup() {
 
   function playRandomFunnySound() {
     const sounds = [
-      'https://nikowoo.github.io/PopupLuigi/public/audio/luigi_caught_1.wav',
-      'https://nikowoo.github.io/PopupLuigi/public/audio/luigi_caught_2.wav',
-      'https://nikowoo.github.io/PopupLuigi/public/audio/luigi_caught_3.wav'
+      'public/audio/luigi_caught_1.wav',
+      'public/audio/luigi_caught_2.wav',
+      'public/audio/luigi_caught_3.wav'
     ];
     const sound = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
     sound.play();
