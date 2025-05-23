@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="icon" type="image/x-icon" href="public/img/favicon.png">
+  <title>Bouncing Luigi Army</title>
+</head>
+<body></body>
+  <img style="position: absolute;
+  right: 9px;
+  bottom: 16px;
+  width: 15%;" src="public/img/logo.png">
+<style>
+  #text {
+    color: white;
+    position: fixed;
+  font-size: 14px;
+  }
+  body {background-color: black;}
+</style>
+<script>
+
+let countdownInterval;
+  let hasPlayed = false;
+  let luigiPopup = null;
+  let luigiStopped = false;
+  let timer = null;
+  const popupWindows = [];
+  const popupData = [];
+
+  document.addEventListener('click', startGame, { once: true });
+
+function startGame() {
+  Funky();
+  openLuigiPopup();
+  for (let i = 0; i < 9; i++) openBouncingTacoPopup();
+  openIntroPopup();
+
+  setTimeout(() => {
+    revealPopupImages();
+    startTimer(); 
+  }, 1000);
+}
+
+
+
+
+function playTickSound() {
+  const audio = new Audio('public/audio/tick.ogg');
+  audio.play().catch(err => console.log('Tick sound error:', err));
+}
+
+function startTimer() {
+  clearInterval(countdownInterval);
+  clearTimeout(timer);
+
+  timeLeft = 15;
+
+  countdownInterval = setInterval(() => {
+    timeLeft--;
+    playTickSound();
+    console.log("Time left:", timeLeft);
+
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+    }
+  }, 1000);
+
+  timer = setTimeout(() => {
+    clearInterval(countdownInterval);
+    handleTimeout();
+  }, 14000);
+}
+
+
+  function handleTimeout() {
+    playSound('public/audio/luigi_timeup.wav');
+    highlightLuigi();
+    setTimeout(restartGame, 3000);
+  }
+
+  function highlightLuigi() {
+    if (luigiPopup && !luigiPopup.closed) {
+      luigiPopup.document.body.style.outline = '10px solid red';
+    }
+  }
+
+function restartGame() {
+  luigiStopped = false;
+  clearTimeout(timer);
+  closeAllPopups();
+  popupData.length = 0;
+
+  setTimeout(() => {
+    Funky();
+    openLuigiPopup();
+    for (let i = 0; i < 9; i++) openBouncingTacoPopup();
+    openIntroPopup();
+
+    setTimeout(() => {
+      revealPopupImages();
+      startTimer();
+    }, 1000);
+  }, 500);
+}
+
+
+
+let introPopup;
+
+function openIntroPopup() {
+  introPopup = window.open(
+    'timer.html',
+    'IntroPopup',
+    'left=9999,width=150,height=100,resizable=no,scrollbars=no'
+  );
+
+  if (introPopup) {
+    introPopup.focus();
+  }
+}
+
+
+
+  function Funky() {
+    if (!hasPlayed) {
+      const audio = new Audio('public/audio/music.wav');
+      audio.loop = true;
+      audio.play();
+      hasPlayed = true;
+    }
+  }
+
+  function openLuigiPopup() {
+    openPopupWithImage("public/img/character/luigi.png", true);
+  }
+
+  function openBouncingTacoPopup() {
+    const images = [
+      "public/img/character/mario.png",
+      "public/img/character/wario.png",
+      "public/img/character/yoshi.png"
+    ];
+    const randomImage = images[Math.floor(Math.random() * images.length)];
+    openPopupWithImage(randomImage, false);
+  }
+
+  function openPopupWithImage(imageSrc, isLuigi) {
+    const width = 200;
+    const height = 200;
+    let x = Math.floor(Math.random() * (screen.availWidth - width));
+    let y = Math.floor(Math.random() * (screen.availHeight - height));
+    let dx = (Math.random() > 0.5 ? 1 : -1) * 5;
+    let dy = (Math.random() > 0.5 ? 1 : -1) * 5;
+
+    const popup = window.open('', '', `width=${width},height=${height},left=${x},top=${y}`);
+    if (!popup) return;
+
+    popup.document.write(`
+      <title>???</title>
+      <body style="margin:0;overflow:hidden;background:black;cursor:pointer;">
+        <img id="img" width="${width}" height="${height}" style="display:block;visibility:hidden;">
+      </body>
+    `);
+    popup.document.close();
+
+    popupWindows.push(popup);
+    popupData.push({ popup, imageSrc, isLuigi, x, y, dx, dy });
+
+    if (isLuigi) {
+      luigiPopup = popup;
+    }
+
+    function bounce() {
+      if (popup.closed || (isLuigi && luigiStopped)) return;
+
+      x += dx;
+      y += dy;
+
+      if (x <= 0 || x + width >= screen.availWidth) dx *= -1;
+      if (y <= 0 || y + height >= screen.availHeight) dy *= -1;
+
+      popup.moveTo(x, y);
+      requestAnimationFrame(bounce);
+    }
+
+    bounce();
+  }
+
+  function revealPopupImages() {
+    popupData.forEach(({ popup, imageSrc, isLuigi }) => {
+      if (!popup.closed) {
+        const img = popup.document.getElementById('img');
+        img.src = imageSrc;
+        img.style.visibility = 'visible';
+
+        img.onclick = () => {
+          if (isLuigi) {
+            clearTimeout(timer);
+            closeAllPopupsExceptLuigi();
+            playRandomFunnySound();
+          } else {
+            clearTimeout(timer);
+            playSound('public/audio/luigi_wrong.wav');
+            restartGame();
+          }
+        };
+      }
+    });
+  }
+
+  function closeAllPopups() {
+    popupWindows.forEach(p => {
+      if (!p.closed) p.close();
+    });
+    popupWindows.length = 0;
+      if (introPopup && !introPopup.closed) {
+    introPopup.close();
+      }
+  }
+
+  function closeAllPopupsExceptLuigi() {
+    popupWindows.forEach(p => {
+      if (!p.closed && p !== luigiPopup) p.close();
+      restartGame();
+    });
+  }
+
+  function playRandomFunnySound() {
+    const sounds = [
+      'public/audio/luigi_caught_1.wav',
+      'public/audio/luigi_caught_2.wav',
+      'public/audio/luigi_caught_3.wav'
+    ];
+    const sound = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
+    sound.play();
+  }
+
+  function playSound(path) {
+    const audio = new Audio(path);
+    audio.play();
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      clearTimeout(timer);
+      closeAllPopups();
+    }
+  });
+</script>
+<div id="text">
+  <h2>Click ONCE to get started</h2>
+  <p>Once you click your browser will attempt to open several popups, if you want to play properly accept permissions. I promise it's nothing bad</p>
+  <p>This page contains autoplaying elements, to close all popup windows focus on the original page and press "esc" or the escape button.</p>
+</div>
+</body>
+</html>

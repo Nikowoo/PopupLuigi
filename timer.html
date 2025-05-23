@@ -1,0 +1,105 @@
+<head>
+  <title>Timer</title>
+  <style>
+    :root {
+      --scale: 1;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 10px;
+      background: white;
+    }
+
+    #timerWrapper {
+      transform: scale(var(--scale));
+      transform-origin: center center;
+    }
+
+    #timer {
+      display: flex;
+      gap: 4px;
+    }
+
+    .digit {
+      height: 15px;
+      background-image: url('public/img/numbers.png');
+      background-repeat: no-repeat;
+      background-position-y: 0px;
+      image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+  <div id="timerWrapper">
+    <div id="timer">
+      <div class="digit" id="digit1"></div>
+      <div class="digit" id="digit2"></div>
+    </div>
+  </div>
+
+  <script>
+    const digitData = [
+      { width: 13, offset: 0 },
+      { width: 8,  offset: 14 },
+      { width: 13, offset: 23 },
+      { width: 12, offset: 37 },
+      { width: 15, offset: 50 },
+      { width: 13, offset: 66 },
+      { width: 14, offset: 80 },
+      { width: 14, offset: 95 },
+      { width: 14, offset: 110 },
+      { width: 14, offset: 125 }
+    ];
+
+    let timeLeft = 15;
+
+    function setDigit(id, digit) {
+      const data = digitData[digit];
+      const el = document.getElementById(id);
+      el.style.width = `${data.width}px`;
+      el.style.backgroundPositionX = `-${data.offset}px`;
+    }
+
+    function updateTimer() {
+      if (timeLeft < 0) return;
+
+      const tens = Math.floor(timeLeft / 10);
+      const ones = timeLeft % 10;
+
+      setDigit('digit1', tens);
+      setDigit('digit2', ones);
+
+      timeLeft--;
+    }
+
+    // Resize scaling to fit screen width
+    function resizeScale() {
+      const timer = document.getElementById("timer");
+      const wrapper = document.getElementById("timerWrapper");
+
+      const totalWidth =
+        digitData[Math.floor(timeLeft / 10)].width +
+        digitData[timeLeft % 10].width +
+        4; // gap
+
+      const screenWidth = window.innerWidth * 0.9;
+      const scale = screenWidth / totalWidth;
+      wrapper.style.setProperty("--scale", scale);
+    }
+
+    // Setup timer
+    updateTimer();
+    resizeScale();
+    const interval = setInterval(() => {
+      updateTimer();
+
+      if (timeLeft < 0) clearInterval(interval);
+    }, 1000);
+
+    window.addEventListener("resize", resizeScale);
+  </script>
+</body>
