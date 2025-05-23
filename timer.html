@@ -26,7 +26,7 @@
 
     .digit {
       height: 15px;
-      background-image: url('https://nikowoo.github.io/PopupLuigi/public/img/numbers.png');
+      background-image: url('public/img/numbers.png');
       background-repeat: no-repeat;
       background-position-y: 0px;
       image-rendering: pixelated;
@@ -75,8 +75,6 @@
 
       timeLeft--;
     }
-
-    // Resize scaling to fit screen width
     function resizeScale() {
       const timer = document.getElementById("timer");
       const wrapper = document.getElementById("timerWrapper");
@@ -84,14 +82,13 @@
       const totalWidth =
         digitData[Math.floor(timeLeft / 10)].width +
         digitData[timeLeft % 10].width +
-        4; // gap
+        4;
 
       const screenWidth = window.innerWidth * 0.9;
       const scale = screenWidth / totalWidth;
       wrapper.style.setProperty("--scale", scale);
     }
 
-    // Setup timer
     updateTimer();
     resizeScale();
     const interval = setInterval(() => {
