@@ -104,20 +104,26 @@ function restartGame() {
 }
 
 
-
 let introPopup;
 
 function openIntroPopup() {
+  const popupWidth = 150;
+  const popupHeight = 100;
+
+  const left = screen.availWidth - popupWidth;
+  const top = 0;
+
   introPopup = window.open(
     'timer.html',
     'IntroPopup',
-    'left=9999,width=150,height=100,resizable=no,scrollbars=no'
+    `left=${left},top=${top},width=${popupWidth},height=${popupHeight},resizable=no,scrollbars=no`
   );
 
   if (introPopup) {
     introPopup.focus();
   }
 }
+
 
 
 
